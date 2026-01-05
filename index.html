@@ -3,20 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>부가세 계산기</title>
+  <title>오직미 거래처 식당 리스트</title>
   <style>
     :root {
       color-scheme: light;
-      --bg: #eef2ff;
+      --bg: #f8fafc;
       --card: #ffffff;
-      --text: #1f2933;
-      --muted: #52606d;
-      --primary: #4f46e5;
-      --primary-dark: #4338ca;
-      --border: #d9e2ec;
-      --focus: #0ea5e9;
-      --danger: #b91c1c;
-      --accent: #22c55e;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --link: #2563eb;
     }
 
     * {
@@ -26,695 +22,300 @@
     body {
       margin: 0;
       font-family: "Pretendard", "Noto Sans KR", system-ui, -apple-system, sans-serif;
-      background: radial-gradient(circle at top, #fdf4ff 0%, var(--bg) 45%, #ecfeff 100%);
+      background: var(--bg);
       color: var(--text);
-      line-height: 1.5;
-    }
-
-    .container {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 24px;
+      line-height: 1.6;
     }
 
     header {
+      padding: 32px 16px 12px;
       text-align: center;
-      margin-bottom: 24px;
     }
 
-    h1 {
-      margin: 0;
-      font-size: clamp(1.6rem, 2vw + 1.2rem, 2.4rem);
+    header h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.5rem, 2vw + 1rem, 2.4rem);
       letter-spacing: -0.02em;
+    }
+
+    header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .status {
+      margin: 16px auto 24px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      background: #e2e8f0;
+      color: #334155;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .list {
+      display: grid;
+      gap: 16px;
     }
 
     .card {
       background: var(--card);
+      border: 1px solid var(--border);
       border-radius: 16px;
-      padding: 24px;
-      box-shadow: 0 20px 40px rgba(79, 70, 229, 0.12);
-      border: 1px solid rgba(99, 102, 241, 0.2);
+      padding: 16px;
       display: grid;
-      gap: 24px;
-      backdrop-filter: blur(4px);
+      gap: 12px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
     }
 
-    .grid {
+    .card header {
+      padding: 0;
+      text-align: left;
+    }
+
+    .card h2 {
+      margin: 0 0 4px;
+      font-size: 1.1rem;
+    }
+
+    .meta {
       display: grid;
-      gap: 16px;
+      gap: 4px;
+      color: var(--muted);
+      font-size: 0.9rem;
     }
 
-    .grid.two {
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    .meta strong {
+      color: var(--text);
+      font-weight: 600;
     }
 
-    .section-title {
-      font-weight: 700;
-      font-size: 1rem;
-    }
-
-    .mode-toggle {
-      display: flex;
-      border: 1px solid rgba(99, 102, 241, 0.2);
+    .image-wrap {
+      width: 100%;
+      height: 180px;
       border-radius: 12px;
       overflow: hidden;
-      background: #fff;
+      border: 1px solid var(--border);
+      background: #f1f5f9;
     }
 
-    .mode-toggle label {
-      flex: 1;
-      padding: 12px 16px;
-      text-align: center;
-      cursor: pointer;
-      font-weight: 600;
-      background: #f8fafc;
-      transition: background 0.2s ease, color 0.2s ease;
-    }
-
-    .mode-toggle input {
-      position: absolute;
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .mode-toggle input:checked + span {
-      background: linear-gradient(135deg, var(--primary), #7c3aed);
-      color: #fff;
-    }
-
-    label span {
+    .image-wrap img {
       display: block;
-    }
-
-    .field {
-      display: grid;
-      gap: 8px;
-    }
-
-    .field label {
-      font-weight: 600;
-      color: var(--muted);
-    }
-
-    input[type="text"],
-    input[type="number"],
-    select {
       width: 100%;
-      padding: 12px 14px;
-      border-radius: 10px;
-      border: 1px solid rgba(148, 163, 184, 0.5);
-      font-size: 1rem;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-      background: #fff;
+      height: 100%;
+      object-fit: cover;
     }
 
-    input[type="text"]:focus,
-    input[type="number"]:focus,
-    select:focus,
-    button:focus {
-      outline: 3px solid rgba(14, 165, 233, 0.35);
-      border-color: var(--focus);
-    }
-
-    .rate-row {
+    .link-row {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .helper {
-      font-size: 0.9rem;
-      color: var(--muted);
-    }
-
-    .error {
-      color: var(--danger);
-      font-weight: 600;
-      min-height: 1.2em;
-    }
-
-    .radio-group {
-      display: grid;
-      gap: 12px;
-    }
-
-    .radio-group label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-weight: 600;
-    }
-
-    .results {
-      background: linear-gradient(135deg, #eef2ff, #ecfeff);
-      border-radius: 16px;
-      padding: 20px;
-      display: grid;
-      gap: 16px;
-      border: 1px solid rgba(99, 102, 241, 0.18);
-    }
-
-    .result-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-
-    .result-row .label {
-      font-weight: 700;
-    }
-
-    .result-row .value {
-      font-size: clamp(1.3rem, 2vw + 1rem, 2.1rem);
-      font-weight: 700;
-      color: #0f172a;
-    }
-
-    .result-row button {
-      padding: 8px 12px;
+      gap: 4px;
       font-size: 0.9rem;
     }
 
-    .button-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      justify-content: flex-end;
+    .link-row a {
+      color: var(--link);
+      text-decoration: none;
+      word-break: break-all;
     }
 
-    button {
-      border: none;
-      background: linear-gradient(135deg, var(--primary), #7c3aed);
-      color: #fff;
-      padding: 12px 18px;
-      border-radius: 10px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 12px 22px rgba(79, 70, 229, 0.2);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    .link-row a:hover {
+      text-decoration: underline;
     }
 
-    button:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 18px 28px rgba(79, 70, 229, 0.24);
-    }
-
-    button.secondary {
-      background: #ffffff;
-      color: #1e293b;
-      box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.5);
-    }
-
-    button.secondary:hover {
-      background: #eef2ff;
-      transform: translateY(-1px);
-    }
-
-    .copy-status {
-      font-size: 0.85rem;
-      color: var(--muted);
-      min-height: 1.2em;
-    }
-
-    @media (max-width: 720px) {
-      .rate-row {
-        grid-template-columns: 1fr;
+    @media (min-width: 720px) {
+      .card {
+        grid-template-columns: 220px 1fr;
+        align-items: start;
       }
 
-      .result-row {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .button-row {
-        justify-content: stretch;
-      }
-
-      .button-row button {
-        width: 100%;
+      .image-wrap {
+        align-self: start;
       }
     }
   </style>
 </head>
 <body>
-  <!--
-    부가세(VAT) 계산기 사용법
-    1) 입력 모드를 선택하고 금액을 입력하면 실시간으로 계산됩니다.
-    2) 부가세율은 기본 10%이며, 직접입력을 선택하면 소수점 세율을 사용할 수 있습니다.
-    3) 결과 옆의 복사 버튼을 누르면 클립보드에 복사됩니다.
-    4) "현재 값으로 링크 공유" 버튼으로 동일한 상태를 링크로 공유할 수 있습니다.
-  -->
-  <div class="container">
-    <header>
-      <h1>부가세 계산기</h1>
-      <p class="helper">공급가액/합계 입력 모드를 전환하고 부가세율과 반올림 옵션을 설정하세요.</p>
-    </header>
-
-    <main class="card" aria-live="polite">
-      <section class="grid">
-        <div class="field">
-          <span class="section-title">입력 모드</span>
-          <div class="mode-toggle" role="tablist" aria-label="입력 모드 토글">
-            <label>
-              <input type="radio" name="mode" value="supply" checked />
-              <span role="tab" aria-selected="true">공급가액(세전) 입력</span>
-            </label>
-            <label>
-              <input type="radio" name="mode" value="total" />
-              <span role="tab" aria-selected="false">합계(세후) 입력</span>
-            </label>
-          </div>
-        </div>
-
-        <div class="field">
-          <label for="amount-input">금액 입력</label>
-          <input
-            id="amount-input"
-            type="text"
-            inputmode="decimal"
-            placeholder="예: 1,000,000"
-            aria-label="금액 입력"
-          />
-          <div id="amount-error" class="error" aria-live="assertive"></div>
-        </div>
-
-        <div class="grid two">
-          <div class="field">
-            <label for="rate-select">부가세율 선택</label>
-            <div class="rate-row">
-              <select id="rate-select" aria-label="부가세율 선택">
-                <option value="0">0%</option>
-                <option value="1">1%</option>
-                <option value="3">3%</option>
-                <option value="5">5%</option>
-                <option value="7">7%</option>
-                <option value="10" selected>10%</option>
-                <option value="12">12%</option>
-                <option value="15">15%</option>
-                <option value="20">20%</option>
-                <option value="custom">직접입력</option>
-              </select>
-              <input
-                id="rate-custom"
-                type="number"
-                min="0"
-                max="100"
-                step="0.1"
-                disabled
-                placeholder="직접 입력 (%)"
-                aria-label="부가세율 직접입력"
-              />
-            </div>
-            <p class="helper">0~100% 범위의 소수 세율을 허용합니다.</p>
-          </div>
-
-          <div class="field">
-            <span class="section-title">반올림 옵션</span>
-            <div class="radio-group" role="radiogroup" aria-label="반올림 옵션">
-              <label>
-                <input type="radio" name="rounding" value="round" checked />
-                원단위 반올림
-              </label>
-              <label>
-                <input type="radio" name="rounding" value="floor" />
-                원단위 절사(버림)
-              </label>
-              <label>
-                <input type="radio" name="rounding" value="ceil" />
-                원단위 올림
-              </label>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="results" aria-label="계산 결과">
-        <div class="result-row">
-          <div>
-            <div class="label">공급가액(세전)</div>
-            <div class="value" id="result-supply">-</div>
-          </div>
-          <button class="secondary" type="button" data-copy="supply" aria-label="공급가액 복사">
-            복사
-          </button>
-        </div>
-        <div class="result-row">
-          <div>
-            <div class="label">부가세</div>
-            <div class="value" id="result-vat">-</div>
-          </div>
-          <button class="secondary" type="button" data-copy="vat" aria-label="부가세 복사">
-            복사
-          </button>
-        </div>
-        <div class="result-row">
-          <div>
-            <div class="label">합계(세후)</div>
-            <div class="value" id="result-total">-</div>
-          </div>
-          <button class="secondary" type="button" data-copy="total" aria-label="합계 복사">
-            복사
-          </button>
-        </div>
-        <div class="copy-status" id="copy-status" aria-live="polite"></div>
-      </section>
-
-      <section class="button-row">
-        <button class="secondary" type="button" id="reset-button">초기화</button>
-        <button class="secondary" type="button" id="share-button">현재 값으로 링크 공유</button>
-      </section>
-    </main>
-  </div>
+  <header>
+    <h1>오직미 거래처 식당 리스트</h1>
+    <p>오직미 거래처(식당)를 한눈에 확인할 수 있는 전용 리스트입니다.</p>
+  </header>
+  <main>
+    <div class="status" id="status">데이터를 불러오는 중...</div>
+    <section class="list" id="list" aria-live="polite"></section>
+  </main>
 
   <script>
-    const modeInputs = document.querySelectorAll('input[name="mode"]');
-    const roundingInputs = document.querySelectorAll('input[name="rounding"]');
-    const amountInput = document.getElementById('amount-input');
-    const amountError = document.getElementById('amount-error');
-    const rateSelect = document.getElementById('rate-select');
-    const rateCustom = document.getElementById('rate-custom');
-    const resultSupply = document.getElementById('result-supply');
-    const resultVat = document.getElementById('result-vat');
-    const resultTotal = document.getElementById('result-total');
-    const copyStatus = document.getElementById('copy-status');
-    const resetButton = document.getElementById('reset-button');
-    const shareButton = document.getElementById('share-button');
+    const CSV_PATH = "./오직미_식당리스트 - 오직미_식당디렉토리_사이트개발용_최종정비.csv";
 
-    const MAX_AMOUNT = 999999999999;
-    const CUSTOM_RATE_KEY = 'custom';
+    const parseCsv = (text) => {
+      const rows = [];
+      let row = [];
+      let current = "";
+      let inQuotes = false;
 
-    const formatCurrency = (value) => {
-      if (value === null) {
-        return '-';
+      for (let i = 0; i < text.length; i += 1) {
+        const char = text[i];
+        const next = text[i + 1];
+
+        if (char === '"') {
+          if (inQuotes && next === '"') {
+            current += '"';
+            i += 1;
+          } else {
+            inQuotes = !inQuotes;
+          }
+          continue;
+        }
+
+        if (char === ',' && !inQuotes) {
+          row.push(current);
+          current = "";
+          continue;
+        }
+
+        if ((char === '\n' || char === '\r') && !inQuotes) {
+          if (char === '\r' && next === '\n') {
+            i += 1;
+          }
+          row.push(current);
+          if (row.length > 1 || row[0] !== "") {
+            rows.push(row);
+          }
+          row = [];
+          current = "";
+          continue;
+        }
+
+        current += char;
       }
-      return `${value.toLocaleString('ko-KR')}원`;
+
+      if (current.length || row.length) {
+        row.push(current);
+        rows.push(row);
+      }
+
+      return rows;
     };
 
-    const sanitizeNumberInput = (value) => {
-      if (!value) {
-        return '';
+    const createCard = (restaurant) => {
+      const card = document.createElement("article");
+      card.className = "card";
+
+      const imageCell = document.createElement("div");
+      if (restaurant.image) {
+        imageCell.className = "image-wrap";
+        const img = document.createElement("img");
+        img.src = restaurant.image;
+        img.alt = `${restaurant.name} 이미지`;
+        img.loading = "lazy";
+        imageCell.appendChild(img);
       }
-      return value.replace(/[^\d.,]/g, '');
+
+      const content = document.createElement("div");
+      const header = document.createElement("header");
+      const title = document.createElement("h2");
+      title.textContent = restaurant.name;
+      const meta = document.createElement("div");
+      meta.className = "meta";
+      meta.innerHTML = `
+        <div><strong>주소:</strong> ${restaurant.address}</div>
+        <div><strong>지역:</strong> ${restaurant.region}</div>
+        <div><strong>유형:</strong> ${restaurant.category}</div>
+      `;
+      header.appendChild(title);
+      header.appendChild(meta);
+
+      const links = document.createElement("div");
+      links.className = "link-row";
+
+      if (restaurant.place) {
+        const placeLink = document.createElement("a");
+        placeLink.href = restaurant.place;
+        placeLink.target = "_blank";
+        placeLink.rel = "noopener noreferrer";
+        placeLink.textContent = "네이버 플레이스 보기";
+        links.appendChild(placeLink);
+      }
+
+      if (restaurant.image) {
+        const imageLink = document.createElement("a");
+        imageLink.href = restaurant.image;
+        imageLink.target = "_blank";
+        imageLink.rel = "noopener noreferrer";
+        imageLink.textContent = restaurant.image;
+        links.appendChild(imageLink);
+      }
+
+      content.appendChild(header);
+      if (links.children.length > 0) {
+        content.appendChild(links);
+      }
+
+      if (imageCell.childElementCount) {
+        card.appendChild(imageCell);
+      }
+      card.appendChild(content);
+
+      return card;
     };
 
-    const parseAmount = (value) => {
-      if (!value) {
-        return null;
-      }
-      const sanitized = value.replace(/,/g, '');
-      if (!/^\d*(\.\d+)?$/.test(sanitized)) {
-        return NaN;
-      }
-      const numberValue = Number(sanitized);
-      if (!Number.isFinite(numberValue)) {
-        return NaN;
-      }
-      return numberValue;
+    const formatRegion = (row) => {
+      const parts = [row[5], row[6], row[7]].filter(Boolean);
+      return parts.join(" ") || "-";
     };
 
-    const getRatePercent = () => {
-      if (rateSelect.value === CUSTOM_RATE_KEY) {
-        return Number(rateCustom.value);
-      }
-      return Number(rateSelect.value);
+    const formatCategory = (row) => {
+      const parts = [row[8], row[9], row[10]].filter(Boolean);
+      return parts.join(" · ") || "-";
     };
 
-    const applyRounding = (value, method) => {
-      if (!Number.isFinite(value)) {
-        return 0;
-      }
-      switch (method) {
-        case 'floor':
-          return Math.floor(value);
-        case 'ceil':
-          return Math.ceil(value);
-        default:
-          return Math.round(value);
-      }
-    };
+    const init = async () => {
+      const status = document.getElementById("status");
+      const list = document.getElementById("list");
 
-    const preciseMultiply = (amount, ratePercent) => {
-      const scaledRate = Math.round(ratePercent * 10000); // percent to 1e4 scale
-      return (amount * scaledRate) / 10000 / 100;
-    };
-
-    const preciseDivide = (amount, ratePercent) => {
-      const scaledRate = Math.round(ratePercent * 10000);
-      const denominator = 10000 * 100 + scaledRate;
-      return (amount * 10000 * 100) / denominator;
-    };
-
-    const getCurrentMode = () =>
-      document.querySelector('input[name="mode"]:checked').value;
-
-    const getRounding = () =>
-      document.querySelector('input[name="rounding"]:checked').value;
-
-    const updateModeTabs = () => {
-      const spans = document.querySelectorAll('.mode-toggle span');
-      spans.forEach((span) => {
-        const input = span.parentElement.querySelector('input');
-        span.setAttribute('aria-selected', input.checked ? 'true' : 'false');
-      });
-    };
-
-    const showError = (message) => {
-      amountError.textContent = message || '';
-    };
-
-    const validateRate = (ratePercent) => {
-      if (!Number.isFinite(ratePercent)) {
-        return false;
-      }
-      return ratePercent >= 0 && ratePercent <= 100;
-    };
-
-    const formatInputDisplay = (value) => {
-      if (value === null || value === undefined || value === '') {
-        return '';
-      }
-      const sanitized = value.replace(/,/g, '');
-      if (!/^\d*(\.\d+)?$/.test(sanitized)) {
-        return value;
-      }
-      const [integerPart, decimalPart] = sanitized.split('.');
-      const formattedInt = Number(integerPart || '0').toLocaleString('ko-KR');
-      return decimalPart ? `${formattedInt}.${decimalPart}` : formattedInt;
-    };
-
-    const calculate = () => {
-      const rawValue = amountInput.value.trim();
-      if (!rawValue) {
-        resultSupply.textContent = '-';
-        resultVat.textContent = '-';
-        resultTotal.textContent = '-';
-        showError('금액을 입력하세요');
-        return;
-      }
-
-      const amount = parseAmount(rawValue);
-      if (Number.isNaN(amount)) {
-        showError('숫자만 입력하세요');
-        return;
-      }
-      if (amount < 0) {
-        showError('음수는 입력할 수 없습니다');
-        return;
-      }
-      if (amount > MAX_AMOUNT) {
-        showError('최대 999,999,999,999까지 입력 가능합니다');
-        return;
-      }
-
-      const ratePercent = getRatePercent();
-      if (!validateRate(ratePercent)) {
-        showError('부가세율은 0~100% 사이여야 합니다');
-        return;
-      }
-
-      const rounding = getRounding();
-      const rate = ratePercent / 100;
-      let supply = 0;
-      let vat = 0;
-      let total = 0;
-
-      if (getCurrentMode() === 'supply') {
-        supply = amount;
-        vat = preciseMultiply(supply, ratePercent);
-        vat = applyRounding(vat, rounding);
-        total = applyRounding(supply + vat, rounding);
-      } else {
-        total = amount;
-        supply = preciseDivide(total, ratePercent);
-        supply = applyRounding(supply, rounding);
-        vat = applyRounding(total - supply, rounding);
-      }
-
-      showError('');
-      resultSupply.textContent = formatCurrency(supply);
-      resultVat.textContent = formatCurrency(vat);
-      resultTotal.textContent = formatCurrency(total);
-    };
-
-    let debounceTimer;
-    const scheduleCalculate = () => {
-      window.clearTimeout(debounceTimer);
-      debounceTimer = window.setTimeout(calculate, 150);
-    };
-
-    const syncRateInput = () => {
-      if (rateSelect.value === CUSTOM_RATE_KEY) {
-        rateCustom.disabled = false;
-        rateCustom.focus();
-      } else {
-        rateCustom.disabled = true;
-        rateCustom.value = '';
-      }
-    };
-
-    const handleCopy = async (target) => {
-      const textMap = {
-        supply: resultSupply.textContent.replace('원', ''),
-        vat: resultVat.textContent.replace('원', ''),
-        total: resultTotal.textContent.replace('원', ''),
-      };
-      const text = textMap[target];
-      if (!text || text === '-') {
-        copyStatus.textContent = '복사할 값이 없습니다.';
-        return;
-      }
       try {
-        await navigator.clipboard.writeText(text);
-        copyStatus.textContent = '복사되었습니다.';
+        const response = await fetch(CSV_PATH);
+        if (!response.ok) {
+          throw new Error("데이터를 불러오지 못했습니다.");
+        }
+        const text = await response.text();
+        const rows = parseCsv(text);
+        const header = rows[0];
+        const dataRows = rows.slice(1).filter((row) => row.length && row.some((value) => value.trim() !== ""));
+
+        const restaurants = dataRows.map((row) => ({
+          id: row[0] || "",
+          name: row[1] || "이름 미상",
+          address: row[2] || "주소 정보 없음",
+          place: row[3] || "",
+          image: row[4] || "",
+          region: formatRegion(row),
+          category: formatCategory(row),
+          tags: row[11] || "",
+        }));
+
+        list.innerHTML = "";
+        restaurants.forEach((restaurant) => {
+          list.appendChild(createCard(restaurant));
+        });
+
+        status.textContent = `총 ${restaurants.length}개 식당이 등록되어 있습니다.`;
       } catch (error) {
-        copyStatus.textContent = '복사에 실패했습니다.';
+        status.textContent = "데이터를 불러오는 중 문제가 발생했습니다.";
+        status.style.background = "#fee2e2";
+        status.style.color = "#b91c1c";
+        console.error(error);
       }
     };
 
-    const resetAll = () => {
-      amountInput.value = '';
-      rateSelect.value = '10';
-      rateCustom.value = '';
-      rateCustom.disabled = true;
-      modeInputs[0].checked = true;
-      roundingInputs[0].checked = true;
-      updateModeTabs();
-      showError('');
-      resultSupply.textContent = '-';
-      resultVat.textContent = '-';
-      resultTotal.textContent = '-';
-      copyStatus.textContent = '';
-      scheduleCalculate();
-    };
-
-    const updateShareLink = () => {
-      const params = new URLSearchParams();
-      const mode = getCurrentMode();
-      const amount = amountInput.value.trim();
-      const rateValue = rateSelect.value;
-      const rateCustomValue = rateCustom.value.trim();
-      const rounding = getRounding();
-
-      params.set('mode', mode);
-      params.set('amount', amount);
-      params.set('rate', rateValue);
-      if (rateValue === CUSTOM_RATE_KEY) {
-        params.set('rateCustom', rateCustomValue);
-      }
-      params.set('rounding', rounding);
-
-      const url = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
-      navigator.clipboard.writeText(url).then(
-        () => {
-          copyStatus.textContent = '링크가 복사되었습니다.';
-        },
-        () => {
-          copyStatus.textContent = '링크 복사에 실패했습니다.';
-        }
-      );
-    };
-
-    const restoreFromQuery = () => {
-      const params = new URLSearchParams(window.location.search);
-      const mode = params.get('mode');
-      const amount = params.get('amount');
-      const rate = params.get('rate');
-      const rateCustomValue = params.get('rateCustom');
-      const rounding = params.get('rounding');
-
-      if (mode === 'total') {
-        modeInputs[1].checked = true;
-      }
-      if (rounding) {
-        const roundingInput = document.querySelector(`input[name="rounding"][value="${rounding}"]`);
-        if (roundingInput) {
-          roundingInput.checked = true;
-        }
-      }
-      if (rate) {
-        rateSelect.value = rate;
-      }
-      syncRateInput();
-      if (rateSelect.value === CUSTOM_RATE_KEY && rateCustomValue) {
-        rateCustom.value = rateCustomValue;
-      }
-      if (amount) {
-        amountInput.value = formatInputDisplay(amount);
-      }
-      updateModeTabs();
-      scheduleCalculate();
-    };
-
-    amountInput.addEventListener('input', (event) => {
-      const sanitized = sanitizeNumberInput(event.target.value);
-      event.target.value = formatInputDisplay(sanitized);
-      scheduleCalculate();
-    });
-
-    modeInputs.forEach((input) => {
-      input.addEventListener('change', () => {
-        updateModeTabs();
-        scheduleCalculate();
-      });
-    });
-
-    roundingInputs.forEach((input) => {
-      input.addEventListener('change', scheduleCalculate);
-    });
-
-    rateSelect.addEventListener('change', () => {
-      syncRateInput();
-      scheduleCalculate();
-    });
-
-    rateCustom.addEventListener('input', scheduleCalculate);
-
-    document.querySelectorAll('[data-copy]').forEach((button) => {
-      button.addEventListener('click', (event) => {
-        handleCopy(event.currentTarget.dataset.copy);
-      });
-    });
-
-    resetButton.addEventListener('click', resetAll);
-    shareButton.addEventListener('click', updateShareLink);
-
-    restoreFromQuery();
-
-    // 테스트 케이스
-    // 공급가액 1,000,000 / 10% -> 부가세 100,000 / 합계 1,100,000
-    // 합계 1,100,000 / 10% -> 공급가 1,000,000 / 부가세 100,000
-    // 공급가액 9,999,999 / 10%에서 반올림/절사/올림 비교
-    // 세율 3.3% 같은 소수 세율 직접입력 케이스
-
-    // 수동 테스트 체크리스트
-    // [ ] 입력 모드 전환 시 결과가 올바르게 변경되는지 확인
-    // [ ] 부가세율 직접입력 선택 시 입력칸 활성화 여부 확인
-    // [ ] 반올림 옵션별 결과 차이 확인
-    // [ ] 복사 버튼 클릭 시 클립보드 복사 확인
-    // [ ] 링크 공유 후 새로고침 시 상태 복원 확인
+    init();
   </script>
 </body>
 </html>
